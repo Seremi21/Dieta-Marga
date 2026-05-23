@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#FBF4F0">
+<title>Planul meu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FBF4F0;
+    --bg-card: #FFFFFF;
+    --rose-soft: #F7DDD4;
+    --rose: #EFC4B7;
+    --rose-deep: #D89A8A;
+    --rose-text: #8C4F40;
+    --cream: #F5EADC;
+    --cream-deep: #E8D5BE;
+    --sage: #D8DFC8;
+    --sage-text: #6A7654;
+    --text: #3D2E26;
+    --text-soft: #8A776B;
+    --text-mute: #BCAA9D;
+    --border: #F0E4DA;
+    --shadow: 0 2px 14px rgba(180, 130, 110, 0.07);
+    --shadow-hover: 0 6px 24px rgba(180, 130, 110, 0.12);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: max(env(safe-area-inset-top), 20px) 16px max(env(safe-area-inset-bottom), 100px);
+    line-height: 1.5;
+    overscroll-behavior: none;
+  }
+  .container { max-width: 480px; margin: 0 auto; }
+  .header { text-align: center; padding: 8px 0 20px; }
+  .header-eyebrow { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-mute); margin-bottom: 6px; font-weight: 500; }
+  .header h1 { font-family: 'Fraunces', serif; font-weight: 400; font-size: 30px; letter-spacing: -0.5px; line-height: 1.15; }
+  .header h1 em { font-style: italic; color: var(--rose-deep); font-weight: 500; }
+  .header-date { margin-top: 8px; font-size: 12px; color: var(--text-soft); font-style: italic; text-transform: capitalize; }
+  .progress-card { background: linear-gradient(135deg, #FFF7F2 0%, #FCEAE0 100%); border-radius: 22px; padding: 18px 20px; margin-bottom: 18px; box-shadow: var(--shadow); }
+  .progress-label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+  .progress-label-title { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 500; }
+  .progress-label-count { font-size: 12px; color: var(--text-soft); font-weight: 500; }
+  .progress-bar { height: 7px; background: rgba(255,255,255,0.6); border-radius: 100px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--rose-deep), #E8B59E); border-radius: 100px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); width: 0%; }
+  .day-tabs { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0 14px; margin: 0 -16px 14px; padding-left: 16px; padding-right: 16px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .day-tabs::-webkit-scrollbar { display: none; }
+  .day-tab { flex-shrink: 0; padding: 10px 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 100px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: var(--text-soft); cursor: pointer; transition: all 0.25s ease; white-space: nowrap; min-width: 64px; }
+  .day-tab.active { background: var(--rose-deep); color: white; border-color: var(--rose-deep); }
+  .day-tab.work { border: 1px dashed var(--rose-deep); color: var(--rose-text); }
+  .day-tab.work.active { background: var(--rose-text); border-style: solid; border-color: var(--rose-text); color: white; }
+  .info-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .badge { font-size: 11px; padding: 6px 12px; border-radius: 100px; font-weight: 500; letter-spacing: 0.3px; display: inline-flex; align-items: center; gap: 5px; }
+  .badge-work { background: var(--rose); color: var(--rose-text); }
+  .badge-home { background: var(--sage); color: var(--sage-text); }
+  .badge-shop { background: var(--cream-deep); color: #8A6A3D; }
+  .badge-cheat { background: #E8D5E8; color: #6D4B6D; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; padding: 10px 14px; background: var(--bg-card); border-radius: 14px; margin-bottom: 16px; font-size: 11px; box-shadow: var(--shadow); }
+  .legend-item { display: flex; align-items: center; gap: 6px; color: var(--text-soft); }
+  .legend-dot { width: 9px; height: 9px; border-radius: 3px; }
+  .legend-dot.fiber { background: var(--sage); }
+  .legend-dot.heart { background: var(--rose); }
+  .meal-section { margin-bottom: 12px; background: var(--bg-card); border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); transition: box-shadow 0.25s ease; }
+  .meal-section.done { background: linear-gradient(135deg, #FAFAF6 0%, #F7F4EE 100%); }
+  .meal-header { padding: 16px 18px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px; -webkit-user-select: none; user-select: none; }
+  .meal-header-left { display: flex; align-items: center; gap: 14px; flex: 1; }
+  .meal-icon { width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .icon-mic { background: var(--cream); }
+  .icon-pranz { background: var(--sage); }
+  .icon-cina { background: #E0D5E8; }
+  .icon-gustare { background: var(--rose-soft); }
+  .meal-title { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 500; line-height: 1.2; }
+  .meal-subtitle { font-size: 11px; color: var(--text-mute); margin-top: 2px; letter-spacing: 0.3px; }
+  .meal-count { font-size: 11px; color: var(--text-mute); background: var(--bg); padding: 3px 8px; border-radius: 100px; margin-right: 6px; }
+  .meal-count.complete { background: var(--sage); color: var(--sage-text); }
+  .meal-chevron { color: var(--text-mute); transition: transform 0.3s ease; font-size: 12px; }
+  .meal-section.open .meal-chevron { transform: rotate(180deg); }
+  .meal-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .meal-section.open .meal-content { max-height: 2000px; }
+  .ingredient-list { padding: 0 18px 16px; }
+  .ingredient { display: flex; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--border); gap: 12px; }
+  .ingredient:last-child { border-bottom: none; }
+  .ingredient-check { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--text-mute); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s ease; background: white; }
+  .ingredient-check:active { transform: scale(0.92); }
+  .ingredient-check.checked { background: var(--rose-deep); border-color: var(--rose-deep); }
+  .ingredient-check.checked::after { content: '✓'; color: white; font-size: 12px; font-weight: 700; }
+  .ingredient-name { flex: 1; font-size: 14px; transition: all 0.2s ease; }
+  .ingredient.done .ingredient-name { color: var(--text-mute); text-decoration: line-through; text-decoration-color: var(--rose-deep); }
+  .ingredient-portion { font-size: 11px; color: var(--text-soft); font-weight: 500; background: var(--bg); padding: 4px 9px; border-radius: 100px; white-space: nowrap; margin-left: 4px; }
+  .highlight-fiber { background: linear-gradient(transparent 62%, var(--sage) 62%); padding: 0 2px; }
+  .highlight-heart { background: linear-gradient(transparent 62%, var(--rose-soft) 62%); padding: 0 2px; }
+  .highlight-both { background: linear-gradient(transparent 62%, var(--sage) 62%, var(--sage) 80%, var(--rose-soft) 80%); padding: 0 2px; }
+  .tip-card { background: linear-gradient(135deg, var(--rose-soft) 0%, var(--cream) 100%); border-radius: 22px; padding: 20px; margin: 22px 0 12px; position: relative; overflow: hidden; }
+  .tip-card::before { content: ''; position: absolute; top: -20px; right: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.3); border-radius: 50%; }
+  .tip-eyebrow { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--rose-text); font-weight: 600; margin-bottom: 8px; position: relative; }
+  .tip-title { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 500; margin-bottom: 8px; line-height: 1.25; position: relative; }
+  .tip-body { font-size: 13px; line-height: 1.55; opacity: 0.85; position: relative; }
+  .bottom-actions { margin-top: 22px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .action-btn { background: var(--bg-card); border: 1px solid var(--border); padding: 13px 14px; border-radius: 16px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: var(--text); cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .action-btn:active { transform: scale(0.97); }
+  .action-btn-primary { background: var(--rose-deep); color: white; border-color: var(--rose-deep); box-shadow: 0 4px 14px rgba(216, 154, 138, 0.3); }
+  .divider-ornament { text-align: center; color: var(--text-mute); margin: 28px 0 8px; font-family: 'Fraunces', serif; font-style: italic; font-size: 13px; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(60, 45, 38, 0.45); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); display: none; align-items: flex-end; justify-content: center; z-index: 100; animation: fadeOverlay 0.25s ease; }
+  .modal-overlay.open { display: flex; }
+  @keyframes fadeOverlay { from { opacity: 0; } to { opacity: 1; } }
+  .modal { background: var(--bg); width: 100%; max-width: 480px; border-radius: 28px 28px 0 0; padding: 24px 20px max(env(safe-area-inset-bottom), 24px); max-height: 85vh; overflow-y: auto; animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-handle { width: 40px; height: 4px; background: var(--text-mute); border-radius: 100px; margin: 0 auto 16px; opacity: 0.4; }
+  .modal-title { font-family: 'Fraunces', serif; font-size: 22px; margin-bottom: 4px; }
+  .modal-subtitle { font-size: 12px; color: var(--text-soft); margin-bottom: 20px; }
+  .shop-section { background: var(--bg-card); border-radius: 18px; padding: 16px; margin-bottom: 14px; box-shadow: var(--shadow); }
+  .shop-section-title { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 500; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .shop-day { font-size: 10px; padding: 3px 8px; border-radius: 100px; background: var(--cream-deep); color: #8A6A3D; }
+  .shop-day.vineri { background: var(--rose-soft); color: var(--rose-text); }
+  .shop-item { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); gap: 10px; font-size: 13px; }
+  .shop-item:last-child { border-bottom: none; }
+  .shop-item.checked .shop-name { text-decoration: line-through; color: var(--text-mute); }
+  .shop-check { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid var(--text-mute); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: white; }
+  .shop-check.checked { background: var(--rose-deep); border-color: var(--rose-deep); }
+  .shop-check.checked::after { content: '✓'; color: white; font-size: 11px; font-weight: 700; }
+  .shop-name { flex: 1; }
+  .modal-close { width: 100%; padding: 14px; background: var(--text); color: var(--bg); border: none; border-radius: 16px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; margin-top: 10px; cursor: pointer; }
+  .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(150%); background: var(--text); color: var(--bg); padding: 12px 22px; border-radius: 100px; font-size: 13px; z-index: 200; transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: 0 8px 24px rgba(60,45,38,0.25); }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .celebration { text-align: center; padding: 16px; background: linear-gradient(135deg, var(--sage) 0%, #E8E0CC 100%); border-radius: 18px; margin-bottom: 12px; font-family: 'Fraunces', serif; font-style: italic; font-size: 14px; color: var(--sage-text); animation: fadeIn 0.5s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+<div class="container">
+  <header class="header">
+    <div class="header-eyebrow">planul meu</div>
+    <h1>Bună, <em>frumoaso</em></h1>
+    <div class="header-date" id="todayDate"></div>
+  </header>
+  <div class="progress-card">
+    <div class="progress-label">
+      <span class="progress-label-title" id="progressTitle">Astăzi</span>
+      <span class="progress-label-count" id="progressText">0 / 0</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+  <div class="day-tabs" id="dayTabs"></div>
+  <div id="celebrationContainer"></div>
+  <div id="mealContainer"></div>
+  <div class="tip-card">
+    <div class="tip-eyebrow">✿ Sfat pentru azi</div>
+    <div class="tip-title" id="tipTitle"></div>
+    <div class="tip-body" id="tipBody"></div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot fiber"></div> fibre — pentru colon</div>
+    <div class="legend-item"><div class="legend-dot heart"></div> bun pentru inimă — scade LDL</div>
+  </div>
+  <div class="bottom-actions">
+    <button class="action-btn" onclick="resetDay()">↻ Resetează ziua</button>
+    <button class="action-btn action-btn-primary" onclick="openShopping()">🛒 Cumpărături</button>
+  </div>
+  <div class="divider-ornament">~ cu drag ~</div>
+</div>
+<div class="modal-overlay" id="shopModal" onclick="closeShopping(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Liste de cumpărături</div>
+    <div class="modal-subtitle">Bifează ce ai luat. Se salvează automat.</div>
+    <div id="shopContent"></div>
+    <button class="modal-close" onclick="closeShopping()">Gata</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const planData = {
+  'luni': { label: 'Luni', type: 'home', note: 'gătit acasă',
+    tip: { title: 'Începe ziua cu fibre', body: 'Ovăzul cu fructe de pădure conține beta-glucan — fibra dovedită clinic că scade colesterolul. Bea un pahar mare de apă imediat după. Repetă: apă, apă, apă.' },
+    meals: [
+      { type: 'mic', name: 'Mic Dejun', items: [
+        { food: 'Ovăz integral cu lapte de migdale', portion: '50g + 200ml', tag: 'both' },
+        { food: 'Afine', portion: '50g', tag: 'fiber' },
+        { food: 'Zmeură', portion: '50g', tag: 'fiber' },
+        { food: 'Semințe de in măcinate', portion: '10g', tag: 'both' },
+        { food: 'Unt de migdale', portion: '15g', tag: 'heart' },
+        { food: 'Iaurt natural 2% Zuzu', portion: '150g', tag: null }
+      ]},
+      { type: 'pranz', name: 'Prânz', items: [
+        { food: 'Paste FG integrale', portion: '50g', tag: 'fiber' },
+        { food: 'Ulei de măsline', portion: '9ml', tag: 'heart' },
+        { food: 'Pulpă rață (fără piele)', portion: '120g', tag: null },
+        { food: 'Ardei gras', portion: '70g', tag: 'fiber' },
+        { food: 'Ceapă roșie', portion: '20g', tag: 'fiber' }
+      ]},
+      { type: 'cina', name: 'Cină', items: [
+        { food: 'Năut', portion: '120g', tag: 'both' },
+        { food: 'Pătrunjel verde', portion: '30g', tag: 'fiber' },
+        { food: 'Roșii', portion: '100g', tag: 'fiber' },
+        { food: 'Ceapă roșie', portion: '30g', tag: 'fiber' },
+        { food: 'Ulei de măsline', portion: '15ml', tag: 'heart' },
+        { food: 'Păstrăv', portion: '200g', tag: 'heart' }
+      ]},
+      { type: 'gustare', name: 'Gustare 1', subtitle: 'lungești cu apă', items: [
+        { food: 'Pudră vegan W best', portion: '35g', tag: null },
+        { food: 'Lapte de orez Vemondo', portion: '170ml', tag: null }
+      ]},
+      { type: 'gustare', name: 'Gustare 2', subtitle: 'la cuptor', items: [
+        { food: 'Măr verde cu coajă', portion: '140g', tag: 'fiber' },
+        { food: 'Unt de migdale', portion: '20g', tag: 'heart' },
+        { food: 'Scorțișoară', portion: 'după gust', tag: null }
+      ]}
+    ]
+  },
+  'marti': { label: 'Marți', type: 'home', note: 'gătit acasă',
+    tip: { title: 'Hidratare = colon fericit', body: 'Cu fibrele crescute, ai nevoie de 2L apă pe zi. Începe cu apă caldă cu lămâie dimineața — trezește colonul ușor.' },
+    meals: [
+      { type: 'mic', name: 'Mic Dejun', items: [
+        { food: 'Tortilla FG integrală', portion: '40g', tag: 'fiber' },
+        { food: 'Cremă brânză light', portion: '40g', tag: null },
+        { food: 'Avocado', portion: '70g', tag: 'heart' },
+        { food: 'Jalapeño murat', portion: '25g', tag: null },
+        { food: 'Spanac proaspăt', portion: '30g', tag: 'fiber' }
+      ]},
+      { type: 'pranz', name: 'Prânz', items: [
+        { food: 'Spanac', portion: '170g', tag: 'fiber' },
+        { food: 'Ulei de măsline', portion: '10ml', tag: 'heart' },
+        { food: 'Pulpă curcan', portion: '190g', tag: null },
+        { food: 'Linte fiartă', portion: '80g', tag: 'both' }
+      ]},
+      { type: 'cina', name: 'Cină', items: [
+        { food: 'Ulei de măsline', portion: '5ml', tag: 'heart' },
+        { food: 'Măsline kalamata', portion: '40g', tag: 'heart' },
+        { food: 'Ceapă roșie', portion: '25g', tag: 'fiber' },
+        { food: 'Castraveți', portion: '100g', tag: 'fiber' },
+        { food: 'Roșii cherry', portion: '125g', tag: 'fiber' },
+        { food: 'Pătrunjel verde', portion: '12g', tag: 'fiber' },
+        { food: 'Telemea de vacă', portion: '80g', tag: null },
+        { food: 'Semințe dovleac', portion: '15g', tag: 'heart' }
+      ]},
+      { type: 'gustare', name: 'Gustare 1', items: [
+        { food: 'Baton proteic Barebells', portion: '55g', tag: null }
+      ]},
+      { type: 'gustare', name: 'Gustare 2', items: [
+        { food: 'Lapte migdale Alpro', portion: '180ml', tag: null },
+        { food: 'Pudră vegan W best', portion: '55g', tag: null }
+      ]}
+    ]
+  },
+  'miercuri': { label: 'Miercuri', type: 'shop', note: 'gătit acasă + cumpărături',
+    tip: { title: 'Zi de cumpărături', body: 'Astăzi mergem la cumpărături pentru prima parte a săptămânii. Apasă pe „Cumpărături" jos — lista te așteaptă. Vineri e a doua tură pentru weekend + caserole.' },
+    meals: [
+      { type: 'mic', name: 'Mic Dejun', items: [
+        { food: 'Ou găină fiert', portion: '2 ouă', tag: null },
+        { food: 'Cottage Cheese Light', portion: '100g', tag: null },
+        { food: 'Roșii cherry', portion: '100g', tag: 'fiber' },
+        { food: 'Pâine integrală secară', portion: '40g', tag: 'fiber' },
+        { food: 'Avocado feliat', portion: '40g', tag: 'heart' }
+      ]},
+      { type: 'pranz', name: 'Prânz', items: [
+        { food: 'Ulei de măsline', portion: '15ml', tag: 'heart' },
+        { food: 'Legume mexican', portion: '200g', tag: 'fiber' },
+        { food: 'Crap (sau alt pește gras)', portion: '180g', tag: 'heart' }
+      ]},
+      { type: 'cina', name: 'Cină', items: [
+        { food: 'Ulei de măsline', portion: '10ml', tag: 'heart' },
+        { food: 'Piept de pui', portion: '180g', tag: null },
+        { food: 'Dovlecel', portion: '150g', tag: 'fiber' },
+        { food: 'Quinoa fiartă', portion: '60g', tag: 'fiber' }
+      ]},
+      { type: 'gustare', name: 'Gustare 1', items: [
+        { food: 'Lapte migdale Alpro', portion: '160ml', tag: null },
+        { food: 'Pudră vegan W best', portion: '45g', tag: null },
+        { food: 'Banană', portion: '70g', tag: 'fiber' }
+      ]},
+      { type: 'gustare', name: 'Gustare 2', items: [
+        { food: 'Ciocolată 85% Lindt', portion: '20g', tag: 'heart' },
+        { food: 'Migdale crude', portion: '15g', tag: 'heart' }
+      ]}
+    ]
+  },
+  'joi': { label: 'Joi', type: 'work', note: 'serviciu — caserolă',
+    tip: { title: 'Mesele de la birou', body: 'Caserola e gata de aseară. Bea apă constant între mese. Nu sări peste gustări — colonul are nevoie de ritm regulat. Ești în control.' },
+    meals: [
+      { type: 'mic', name: 'Mic Dejun', subtitle: 'acasă, înainte de plecare', items: [
+        { food: 'Ovăz cu lapte de migdale', portion: '50g + 200ml', tag: 'both' },
+        { food: 'Afine', portion: '50g', tag: 'fiber' },
+        { food: 'Semințe de chia', portion: '10g', tag: 'both' },
+        { food: 'Nuci', portion: '15g', tag: 'heart' }
+      ]},
+      { type: 'pranz', name: 'Prânz', subtitle: 'caserolă', items: [
+        { food: 'Piept pui la cuptor', portion: '150g', tag: null },
+        { food: 'Orez brun', portion: '70g', tag: 'fiber' },
+        { food: 'Broccoli + morcovi', portion: '200g', tag: 'fiber' },
+        { food: 'Ulei de măsline', portion: '10ml', tag: 'heart' }
+      ]},
+      { type: 'cina', name: 'Cină', subtitle: 'acasă', items: [
+        { food: 'Somon la cuptor', portion: '180g', tag: 'heart' },
+        { food: 'Salată verde + rucola', portion: '100g', tag: 'fiber' },
+        { food: 'Sfeclă roșie', portion: '80g', tag: 'fiber' },
+        { food: 'Ulei măsline + lămâie', portion: '10ml', tag: 'heart' }
+      ]},
+      { type: 'gustare', name: 'Gustare 1', subtitle: 'la birou', items: [
+        { food: 'Măr cu coajă', portion: '1 buc', tag: 'fiber' },
+        { food: 'Migdale crude', portion: '20g', tag: 'heart' }
+      ]},
+      { type: 'gustare', name: 'Gustare 2', subtitle: 'la birou', items: [
+        { food: 'Iaurt natural 2%', portion: '150g', tag: null },
+        { food: 'Semințe in măcinate', portion: '10g', tag: 'both' }
+      ]}
+    ]
+  },
+  'vineri': { label: 'Vineri', type: 'work', note: 'serviciu — caserolă + cumpărături seara',
+    tip: { title: 'A doua zi de cumpărături', body: 'Diseară facem cumpărăturile pentru weekend. Mâine e zi de gătit caserolele pentru săptămâna viitoare. Lista te așteaptă jos.' },
+    meals: [
+      { type: 'mic', name: 'Mic Dejun', items: [
+        { food: 'Smoothie: spanac + banană + lapte migdale', portion: '300ml', tag: 'both' },
+        { food: 'Unt de migdale', portion: '15g', tag: 'heart' },
+        { food: 'Semințe in', portion: '10g', tag: 'both' }
+      ]},
+      { type: 'pranz', name: 'Prânz', subtitle: 'caserolă', items: [
+        { food: 'Curcan la cuptor', portion: '150g', tag: null },
+        { food: 'Quinoa', portion: '70g', tag: 'fiber' },
+        { food: 'Legume coapte (dovlecel, ardei)', portion: '200g', tag: 'fiber' }
+      ]},
+      { type: 'cina', name: 'Cină', subtitle: 'acasă', items: [
+        { food: 'Tofu sau pește alb', portion: '180g', tag: 'heart' },
+        { food: 'Linte fiartă', portion: '100g', tag: 'both' },
+        { food: 'Salată mixtă', portion: '150g', tag: 'fiber' },
+        { food: 'Ulei de măsline', portion: '10ml', tag: 'heart' }
+      ]},
+      { type: 'gustare', name: 'Gustare 1', items: [
+        { food: 'Hummus', portion: '60g', tag: 'both' },
+        { food: 'Morcov + țelină', portion: '100g', tag: 'fiber' }
+      ]},
+      { type: 'gustare', name: 'Gustare 2', items: [
+        { food: 'Pere cu coajă', portion: '1 buc', tag: 'fiber' },
+        { food: 'Nuci', portion: '15g', tag: 'heart' }
+      ]}
+    ]
+  },
+  'sambata': { label: 'Sâmbătă', type: 'work', note: 'serviciu — caserolă',
+    tip: { title: 'Ultima zi de muncă', body: 'Caserola de azi e ultima din serie. Mâine respiri și gătești seara caserolele pentru joi-vineri-sâmbătă. Bravo, ai dus săptămâna până la capăt.' },
+    meals: [
+      { type: 'mic', name: 'Mic Dejun', subtitle: 'acasă, înainte de plecare', items: [
+        { food: 'Ouă fierte', portion: '2 buc', tag: null },
+        { food: 'Pâine integrală secară', portion: '40g', tag: 'fiber' },
+        { food: 'Avocado', portion: '50g', tag: 'heart' },
+        { food: 'Roșii cherry', portion: '80g', tag: 'fiber' }
+      ]},
+      { type: 'pranz', name: 'Prânz', subtitle: 'caserolă', items: [
+        { food: 'Piept pui sau curcan', portion: '150g', tag: null },
+        { food: 'Năut sau linte', portion: '100g', tag: 'both' },
+        { food: 'Legume asortate', portion: '200g', tag: 'fiber' }
+      ]},
+      { type: 'cina', name: 'Cină', subtitle: 'acasă', items: [
+        { food: 'Pește alb (cod / dorada)', portion: '180g', tag: 'heart' },
+        { food: 'Cartof dulce copt', portion: '150g', tag: 'fiber' },
+        { food: 'Sparanghel', portion: '150g', tag: 'fiber' }
+      ]},
+      { type: 'gustare', name: 'Gustare 1', items: [
+        { food: 'Banană', portion: '1 buc', tag: 'fiber' },
+        { food: 'Unt migdale', portion: '15g', tag: 'heart' }
+      ]},
+      { type: 'gustare', name: 'Gustare 2', items: [
+        { food: 'Iaurt grecesc 2%', portion: '150g', tag: null },
+        { food: 'Fructe de pădure', portion: '70g', tag: 'fiber' }
+      ]}
+    ]
+  },
+  'duminica': { label: 'Duminică', type: 'cheat', note: 'cheatmeal moderat + gătit caserole seara',
+    tip: { title: 'Ziua de respiro', body: 'Cheatmeal la prânz — alege UN lucru pe care îl poftești, nu trei. Restul zilei: ușor și plin de fibre. Seara gătim caserolele pentru joi-vineri-sâmbătă.' },
+    meals: [
+      { type: 'mic', name: 'Mic Dejun', items: [
+        { food: 'Banană', portion: '1 buc', tag: 'fiber' },
+        { food: 'Unt de migdale', portion: '20g', tag: 'heart' },
+        { food: 'Cacao pudră', portion: '10g', tag: 'heart' },
+        { food: 'Pudră vegan W best', portion: '15g', tag: null },
+        { food: 'Lapte migdale', portion: '200ml', tag: null }
+      ]},
+      { type: 'pranz', name: 'Prânz', subtitle: 'cheatmeal moderat', items: [
+        { food: 'Ce poftești — UN preparat', portion: 'porție normală', tag: null }
+      ]},
+      { type: 'cina', name: 'Cină', subtitle: 'ușoară', items: [
+        { food: 'Salată mare + pui sau pește', portion: '1 porție', tag: 'fiber' },
+        { food: 'Ulei de măsline', portion: '5ml', tag: 'heart' }
+      ]},
+      { type: 'gustare', name: 'Gustare 1', items: [
+        { food: 'Afine', portion: '100g', tag: 'fiber' }
+      ]},
+      { type: 'gustare', name: 'Gustare 2', items: [
+        { food: 'Pomelo sau grapefruit', portion: '200g', tag: 'fiber' }
+      ]}
+    ]
+  }
+};
+const shoppingLists = {
+  miercuri: [
+    { section: 'Legume + fructe', items: ['Spanac proaspăt', 'Roșii cherry', 'Castraveți', 'Ardei gras', 'Ceapă roșie', 'Dovlecel', 'Avocado (2 buc)', 'Banane', 'Mere verzi', 'Afine', 'Zmeură', 'Lămâi'] },
+    { section: 'Carne + pește', items: ['Piept de pui (500g)', 'Pulpă rață', 'Pulpă curcan', 'Crap sau pește gras (400g)', 'Păstrăv'] },
+    { section: 'Lactate + ouă', items: ['Ouă (10 buc)', 'Iaurt natural Zuzu 2%', 'Cottage Cheese Light', 'Cremă brânză light', 'Telemea de vacă'] },
+    { section: 'Cămară + sec', items: ['Ovăz integral', 'Quinoa', 'Paste FG integrale', 'Năut D\'Aucy', 'Linte uscată', 'Tortilla FG', 'Pâine integrală secară', 'Semințe in', 'Semințe chia', 'Migdale crude', 'Unt de migdale', 'Măsline kalamata'] }
+  ],
+  vineri: [
+    { section: 'Pentru caserole (joi-vineri-sâmbătă)', items: ['Piept de pui (600g)', 'Curcan (400g)', 'Orez brun', 'Quinoa', 'Broccoli', 'Morcovi', 'Sparanghel', 'Cartof dulce', 'Năut sau linte (conservă)'] },
+    { section: 'Pește + tofu', items: ['Somon (180g)', 'Cod sau dorada (200g)', 'Tofu natural (200g)'] },
+    { section: 'Legume + fructe weekend', items: ['Sfeclă roșie', 'Rucola', 'Salată verde mixtă', 'Pere', 'Banane', 'Pomelo sau grapefruit', 'Roșii cherry'] },
+    { section: 'Diverse', items: ['Hummus', 'Țelină tulpini', 'Lapte migdale Alpro', 'Lapte orez Vemondo', 'Ciocolată 85% Lindt', 'Nuci'] }
+  ]
+};
+const iconMap = {
+  mic: { class: 'icon-mic', emoji: '☕' },
+  pranz: { class: 'icon-pranz', emoji: '🌿' },
+  cina: { class: 'icon-cina', emoji: '🌙' },
+  gustare: { class: 'icon-gustare', emoji: '✿' }
+};
+const dayOrder = ['luni', 'marti', 'miercuri', 'joi', 'vineri', 'sambata', 'duminica'];
+const dayMap = { 0: 'duminica', 1: 'luni', 2: 'marti', 3: 'miercuri', 4: 'joi', 5: 'vineri', 6: 'sambata' };
+let currentDay = dayMap[new Date().getDay()];
+let checkedState = {};
+let shopState = {};
+const today = new Date();
+document.getElementById('todayDate').textContent = today.toLocaleDateString('ro-RO', { weekday: 'long', day: 'numeric', month: 'long' });
+function renderTabs() {
+  const container = document.getElementById('dayTabs');
+  container.innerHTML = '';
+  dayOrder.forEach(key => {
+    const day = planData[key];
+    const btn = document.createElement('button');
+    btn.className = 'day-tab';
+    if (day.type === 'work') btn.classList.add('work');
+    if (key === currentDay) btn.classList.add('active');
+    btn.textContent = day.label;
+    btn.onclick = () => { currentDay = key; renderTabs(); renderMeals(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    container.appendChild(btn);
+  });
+}
+function highlightFood(food, tag) {
+  if (tag === 'fiber') return `<span class="highlight-fiber">${food}</span>`;
+  if (tag === 'heart') return `<span class="highlight-heart">${food}</span>`;
+  if (tag === 'both') return `<span class="highlight-both">${food}</span>`;
+  return food;
+}
+function renderMeals() {
+  const day = planData[currentDay];
+  const container = document.getElementById('mealContainer');
+  container.innerHTML = '';
+  document.getElementById('progressTitle').textContent = currentDay === dayMap[new Date().getDay()] ? 'Astăzi' : day.label;
+  const infoRow = document.createElement('div');
+  infoRow.className = 'info-row';
+  let badgeClass = 'badge-home', badgeText = '🏠 ' + day.note;
+  if (day.type === 'work') { badgeClass = 'badge-work'; badgeText = '💼 ' + day.note; }
+  if (day.type === 'cheat') { badgeClass = 'badge-cheat'; badgeText = '✨ ' + day.note; }
+  if (day.type === 'shop') { badgeClass = 'badge-shop'; badgeText = '🛒 ' + day.note; }
+  const mainBadge = document.createElement('div');
+  mainBadge.className = 'badge ' + badgeClass;
+  mainBadge.textContent = badgeText;
+  infoRow.appendChild(mainBadge);
+  container.appendChild(infoRow);
+  const celebContainer = document.getElementById('celebrationContainer');
+  celebContainer.innerHTML = '';
+  let allTotal = 0, allDone = 0;
+  day.meals.forEach((meal, idx) => {
+    meal.items.forEach((item, itemIdx) => {
+      allTotal++;
+      if (checkedState[`${currentDay}-${idx}-${itemIdx}`]) allDone++;
+    });
+  });
+  if (allTotal > 0 && allDone === allTotal) {
+    const celeb = document.createElement('div');
+    celeb.className = 'celebration';
+    celeb.innerHTML = '✿ Felicitări! Ai bifat toată ziua. Ești o forță. ✿';
+    celebContainer.appendChild(celeb);
+  }
+  day.meals.forEach((meal, idx) => {
+    const section = document.createElement('div');
+    section.className = 'meal-section';
+    let mealTotal = meal.items.length, mealDone = 0;
+    meal.items.forEach((item, itemIdx) => {
+      if (checkedState[`${currentDay}-${idx}-${itemIdx}`]) mealDone++;
+    });
+    if (mealDone === mealTotal) section.classList.add('done');
+    if (idx === 0 && mealDone < mealTotal) section.classList.add('open');
+    const icon = iconMap[meal.type];
+    const header = document.createElement('div');
+    header.className = 'meal-header';
+    const countClass = mealDone === mealTotal ? 'meal-count complete' : 'meal-count';
+    header.innerHTML = `
+      <div class="meal-header-left">
+        <div class="meal-icon ${icon.class}">${icon.emoji}</div>
+        <div>
+          <div class="meal-title">${meal.name}</div>
+          ${meal.subtitle ? `<div class="meal-subtitle">${meal.subtitle}</div>` : ''}
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;">
+        <span class="${countClass}">${mealDone}/${mealTotal}</span>
+        <span class="meal-chevron">▾</span>
+      </div>`;
+    header.onclick = () => section.classList.toggle('open');
+    const content = document.createElement('div');
+    content.className = 'meal-content';
+    const list = document.createElement('div');
+    list.className = 'ingredient-list';
+    meal.items.forEach((item, itemIdx) => {
+      const key = `${currentDay}-${idx}-${itemIdx}`;
+      const isChecked = checkedState[key];
+      const ing = document.createElement('div');
+      ing.className = 'ingredient' + (isChecked ? ' done' : '');
+      ing.innerHTML = `
+        <div class="ingredient-check ${isChecked ? 'checked' : ''}"></div>
+        <div class="ingredient-name">${highlightFood(item.food, item.tag)}</div>
+        <div class="ingredient-portion">${item.portion}</div>`;
+      ing.querySelector('.ingredient-check').onclick = (e) => {
+        e.stopPropagation();
+        checkedState[key] = !checkedState[key];
+        saveState();
+        renderMeals();
+      };
+      list.appendChild(ing);
+    });
+    content.appendChild(list);
+    section.appendChild(header);
+    section.appendChild(content);
+    container.appendChild(section);
+  });
+  document.getElementById('tipTitle').textContent = day.tip.title;
+  document.getElementById('tipBody').textContent = day.tip.body;
+  document.getElementById('progressFill').style.width = (allTotal > 0 ? (allDone/allTotal)*100 : 0) + '%';
+  document.getElementById('progressText').textContent = `${allDone} / ${allTotal} bifate`;
+}
+function resetDay() {
+  if (!confirm('Resetezi bifele de azi?')) return;
+  Object.keys(checkedState).forEach(key => {
+    if (key.startsWith(currentDay + '-')) delete checkedState[key];
+  });
+  saveState();
+  renderMeals();
+  showToast('Bifele au fost resetate ✿');
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(() => t.classList.remove('show'), 2200);
+}
+function openShopping() {
+  renderShopping();
+  document.getElementById('shopModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeShopping(e) {
+  if (e && e.target && e.target.id !== 'shopModal' && e.type === 'click') return;
+  document.getElementById('shopModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function renderShopping() {
+  const container = document.getElementById('shopContent');
+  container.innerHTML = '';
+  ['miercuri', 'vineri'].forEach(day => {
+    const dayLabel = day === 'miercuri' ? 'Miercuri' : 'Vineri';
+    shoppingLists[day].forEach((sec, sIdx) => {
+      const block = document.createElement('div');
+      block.className = 'shop-section';
+      const dayClass = day === 'vineri' ? 'shop-day vineri' : 'shop-day';
+      block.innerHTML = `<div class="shop-section-title"><span class="${dayClass}">${dayLabel}</span> ${sec.section}</div>`;
+      sec.items.forEach((item, iIdx) => {
+        const key = `${day}-${sIdx}-${iIdx}`;
+        const checked = shopState[key];
+        const row = document.createElement('div');
+        row.className = 'shop-item' + (checked ? ' checked' : '');
+        row.innerHTML = `<div class="shop-check ${checked ? 'checked' : ''}"></div><div class="shop-name">${item}</div>`;
+        row.querySelector('.shop-check').onclick = () => {
+          shopState[key] = !shopState[key];
+          saveShopState();
+          renderShopping();
+        };
+        block.appendChild(row);
+      });
+      container.appendChild(block);
+    });
+  });
+}
+function saveState() { try { localStorage.setItem('plan_checkedState', JSON.stringify(checkedState)); } catch(e) {} }
+function saveShopState() { try { localStorage.setItem('plan_shopState', JSON.stringify(shopState)); } catch(e) {} }
+function loadState() {
+  try {
+    const s = localStorage.getItem('plan_checkedState');
+    if (s) checkedState = JSON.parse(s);
+    const sh = localStorage.getItem('plan_shopState');
+    if (sh) shopState = JSON.parse(sh);
+  } catch(e) {}
+}
+loadState();
+renderTabs();
+renderMeals();
+</script>
+</body>
+</html>
